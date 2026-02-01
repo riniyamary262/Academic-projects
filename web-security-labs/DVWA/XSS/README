@@ -1,20 +1,41 @@
 
-*(Add similar files for XSS, CSRF, File-Inclusion following same format)*
+---
+
+# 🎯 **Complete XSS Data**
 
 ## **📂 DVWA/XSS/README.md**
 ```markdown
 # 🎯 Cross-Site Scripting (XSS) Lab
 
 ## 📋 Overview
-XSS allows attackers to inject malicious scripts into web pages viewed by other users.
+Cross-Site Scripting (XSS) allows attackers to inject malicious scripts into web pages viewed by other users, compromising client-side security.
 
-## 🔬 Types Explored
-1. **Reflected XSS** - Non-persistent, appears in URL/response
-2. **Stored XSS** - Persistent, saved in database
-3. **DOM-based XSS** - Client-side manipulation
+## 🔬 XSS Types Explored
+| Type | Description | Persistence | Impact |
+|------|-------------|-------------|---------|
+| **Reflected XSS** | Script reflected in immediate response | Non-persistent | Medium |
+| **Stored XSS** | Script stored on server | Persistent | High |
+| **DOM-based XSS** | Client-side script execution | Client-side | Medium-High |
 
-## ⚡ Sample Payloads
-```html
-<script>alert('XSS')</script>
-<img src=x onerror=alert('XSS')>
-<svg onload=alert('XSS')>
+## 🎯 Learning Objectives
+1. Understand different XSS attack vectors
+2. Learn payload crafting techniques
+3. Practice exploitation on different security levels
+4. Implement XSS prevention measures
+
+## ⚠️ Security Impact
+- **Cookie Theft:** Steal session cookies
+- **Keylogging:** Capture user keystrokes
+- **Phishing:** Display fake login forms
+- **Defacement:** Modify page content
+- **Malware Distribution:** Deliver malicious scripts
+
+## 🔧 Testing Environment
+- **Application:** DVWA (Damn Vulnerable Web Application)
+- **Security Levels:** Low, Medium, High
+- **Tools Used:** Browser DevTools, Burp Suite, Manual testing
+
+## 📚 References
+- OWASP XSS Prevention Cheat Sheet
+- PortSwigger XSS Academy
+- MITRE ATT&CK: T1059.007
