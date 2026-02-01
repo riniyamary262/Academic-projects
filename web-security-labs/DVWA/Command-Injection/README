@@ -1,29 +1,23 @@
-# 🎯 DVWA (Damn Vulnerable Web Application) Labs
 
-## 📋 Overview
-DVWA is a PHP/MySQL web application that is damn vulnerable for security learning purposes. It demonstrates common web vulnerabilities with different security levels.
+## **📂 DVWA/Command-Injection/README.md**
+```markdown
+# ⚡ Command Injection Lab
 
-## 🔐 Security Levels Tested
-- **Low:** No security mechanisms
-- **Medium:** Basic protection (easily bypassed)
-- **High:** Better protection (harder to bypass)
-- **Impossible:** Secure code (reference implementation)
+## 🎯 Objective
+Execute arbitrary operating system commands through a web application's input field.
 
-## 📁 Labs Covered
-1. **Command Injection** - OS command execution via input fields
-2. **SQL Injection** - Database manipulation through SQL queries
-3. **Cross-Site Scripting (XSS)** - Client-side code injection
-4. **Cross-Site Request Forgery (CSRF)** - Unauthorized action execution
-5. **File Inclusion** - Local and remote file inclusion attacks
+## 🔍 Vulnerability Description
+Command injection allows attackers to execute OS commands on the host server by injecting malicious input into system commands.
 
-## 🚀 Setup Instructions
-```bash
-# Using Docker (recommended)
-docker run --rm -it -p 80:80 vulnerables/web-dvwa
+## 📊 Security Level Analysis
+| Security Level | Protection | Bypass Method |
+|----------------|------------|---------------|
+| **Low** | None | Direct command injection |
+| **Medium** | Blocks `;` and `&&` | Use `&` or `|` |
+| **High** | Whitelist validation | Difficult to bypass |
+| **Impossible** | Secure input handling | No known bypass |
 
-# Access DVWA
-Open browser: http://localhost
-
-# Default credentials
-Username: admin
-Password: password
+## 📁 Files
+- [Low Security Exploitation](low-security.md)
+- [Medium Security Exploitation](medium-security.md) 
+- [High Security Analysis](high-security.md)
