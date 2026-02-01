@@ -1,0 +1,24 @@
+
+## **📂 DVWA/SQL-Injection/README.md**
+```markdown
+# 🗃️ SQL Injection Lab
+
+## 🎯 Objective
+Manipulate SQL queries through user input to access unauthorized data.
+
+## 📊 Vulnerability Types Tested
+1. **Union-based SQLi** - Combine query results
+2. **Error-based SQLi** - Extract info from error messages  
+3. **Blind SQLi** - Infer data from true/false responses
+4. **Time-based SQLi** - Use timing delays to extract data
+
+## 🛠️ Tools Used
+- Manual testing
+- SQLMap (for advanced testing)
+- Burp Suite (for request manipulation)
+
+## 🔍 Common Payloads
+```sql
+' OR '1'='1
+' UNION SELECT NULL,user() --
+' AND 1=IF(MID(@@version,1,1)='5', SLEEP(5), 0) --
