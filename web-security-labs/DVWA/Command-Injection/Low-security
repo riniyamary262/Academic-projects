@@ -1,0 +1,8 @@
+# 🔓 Low Security - Command Injection
+
+## 🎯 Test Case
+**Target:** Ping functionality that takes IP address input
+
+## ⚡ Exploitation Steps
+
+### 1. Normal Input
