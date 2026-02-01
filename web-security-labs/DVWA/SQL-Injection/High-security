@@ -1,0 +1,45 @@
+
+## **📂 DVWA/SQL-Injection/high-security.md**
+```markdown
+# 🔐 High Security - SQL Injection
+
+## 🎯 Target Application
+Strictly validated user ID lookup with limited SQLi vectors.
+
+## 🔧 Security Implementation
+High level implements:
+- **Session-based input** - Not from GET/POST directly
+- **Stricter validation** - Limited attack surface
+- **Limited characters** - Prevents most payloads
+
+## 🧪 Test Attempts & Results
+
+### Attempt 1: Basic Injection
+
+Input: 1' OR '1'='1
+Result: ❌ FAILED - Input sanitized
+
+
+### Attempt 2: Numeric Injection  
+
+Input: 1 OR 1=1
+Result: ❌ FAILED - Input not from GET/POST
+
+
+### Attempt 3: Cookie Manipulation
+
+Cookie: id=1' UNION SELECT @@version--
+Result: ❌ FAILED - Server-side validation
+
+
+## 🔍 Code Analysis
+```php
+// DVWA High Security
+$id = $_SESSION['id'];  // From session, not direct input
+$id = stripslashes($id);
+$id = mysqli_real_escape_string($GLOBALS["___mysqli_ston"], $id);
+$id = intval($id);  // Convert to integer
+
+// Final query (numeric, no quotes)
+$getid = "SELECT first_name, last_name FROM users WHERE user_id = '$id'";
+
