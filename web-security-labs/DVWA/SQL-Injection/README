@@ -1,24 +1,33 @@
-
-## **📂 DVWA/SQL-Injection/README.md**
-```markdown
 # 🗃️ SQL Injection Lab
 
 ## 🎯 Objective
-Manipulate SQL queries through user input to access unauthorized data.
+Manipulate SQL queries through user input to access unauthorized data, demonstrating database security vulnerabilities.
 
-## 📊 Vulnerability Types Tested
-1. **Union-based SQLi** - Combine query results
-2. **Error-based SQLi** - Extract info from error messages  
-3. **Blind SQLi** - Infer data from true/false responses
-4. **Time-based SQLi** - Use timing delays to extract data
+## 📊 SQL Injection Types Explored
+| Type | Description | DVWA Level |
+|------|-------------|------------|
+| **Union-Based** | Combine results from multiple SELECT statements | Low, Medium |
+| **Error-Based** | Extract data from database error messages | Low |
+| **Boolean Blind** | Infer data from true/false responses | Medium, High |
+| **Time-Based** | Use timing delays to extract information | High |
 
-## 🛠️ Tools Used
-- Manual testing
-- SQLMap (for advanced testing)
-- Burp Suite (for request manipulation)
+## 🛠️ Tools & Techniques
+- **Manual Testing:** Crafting payloads by hand
+- **Burp Suite:** Intercepting and modifying requests
+- **SQLMap:** Automated SQL injection tool
+- **Browser DevTools:** Analyzing requests/responses
 
-## 🔍 Common Payloads
-```sql
-' OR '1'='1
-' UNION SELECT NULL,user() --
-' AND 1=IF(MID(@@version,1,1)='5', SLEEP(5), 0) --
+## 🔍 Database Information Gathered
+- **Database:** MySQL
+- **Version:** 5.0+ 
+- **Tables:** users, guestbook, etc.
+- **Columns:** user_id, first_name, last_name, password
+
+## 📚 Learning Outcomes
+- Understanding SQL query structure and vulnerabilities
+- Learning injection techniques for different security levels
+- Practicing defensive coding against SQLi
+- Recognizing database error information leakage
+
+## ⚠️ Ethical Note
+All testing performed in controlled educational environment (DVWA). Never test on production systems without authorization.
