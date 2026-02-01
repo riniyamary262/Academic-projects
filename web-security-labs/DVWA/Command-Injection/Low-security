@@ -30,6 +30,6 @@ Result: Ping output + Directory listing
 # Read sensitive files
 127.0.0.1; cat /etc/passwd
 
-![Alt text](Command-Injection/Low-Security/low security 1.png)
+![Alt text](Low-Security/low security -1.png)
 
 ![Alt text](low security 2.png)
