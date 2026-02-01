@@ -1,0 +1,20 @@
+
+*(Add similar files for XSS, CSRF, File-Inclusion following same format)*
+
+## **📂 DVWA/XSS/README.md**
+```markdown
+# 🎯 Cross-Site Scripting (XSS) Lab
+
+## 📋 Overview
+XSS allows attackers to inject malicious scripts into web pages viewed by other users.
+
+## 🔬 Types Explored
+1. **Reflected XSS** - Non-persistent, appears in URL/response
+2. **Stored XSS** - Persistent, saved in database
+3. **DOM-based XSS** - Client-side manipulation
+
+## ⚡ Sample Payloads
+```html
+<script>alert('XSS')</script>
+<img src=x onerror=alert('XSS')>
+<svg onload=alert('XSS')>
