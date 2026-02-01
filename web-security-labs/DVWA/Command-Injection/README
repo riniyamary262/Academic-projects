@@ -1,0 +1,29 @@
+# 🎯 DVWA (Damn Vulnerable Web Application) Labs
+
+## 📋 Overview
+DVWA is a PHP/MySQL web application that is damn vulnerable for security learning purposes. It demonstrates common web vulnerabilities with different security levels.
+
+## 🔐 Security Levels Tested
+- **Low:** No security mechanisms
+- **Medium:** Basic protection (easily bypassed)
+- **High:** Better protection (harder to bypass)
+- **Impossible:** Secure code (reference implementation)
+
+## 📁 Labs Covered
+1. **Command Injection** - OS command execution via input fields
+2. **SQL Injection** - Database manipulation through SQL queries
+3. **Cross-Site Scripting (XSS)** - Client-side code injection
+4. **Cross-Site Request Forgery (CSRF)** - Unauthorized action execution
+5. **File Inclusion** - Local and remote file inclusion attacks
+
+## 🚀 Setup Instructions
+```bash
+# Using Docker (recommended)
+docker run --rm -it -p 80:80 vulnerables/web-dvwa
+
+# Access DVWA
+Open browser: http://localhost
+
+# Default credentials
+Username: admin
+Password: password
