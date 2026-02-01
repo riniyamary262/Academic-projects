@@ -1,0 +1,52 @@
+
+## **📂 DVWA/Command-Injection/high-security.md**
+```markdown
+# 🔐 High Security - Command Injection
+
+## 🎯 Test Case
+**Target:** Strongly filtered ping functionality
+
+## 🔧 Security Analysis
+High security level implements:
+1. **Strict input validation**
+2. **Whitelist approach** (only allows valid IP format)
+3. **Comprehensive filtering**
+
+## ⚡ Test Attempts
+
+### Attempt 1: Basic Injection
+
+Input: 127.0.0.1; ls
+Result: ❌ FAILED - Input rejected
+
+
+### Attempt 2: Alternative Separators
+
+Input: 127.0.0.1 & ls
+Input: 127.0.0.1 | ls
+Input: 127.0.0.1 && ls
+Result: ❌ ALL FAILED
+
+
+### Attempt 3: Encoded Payloads
+
+Input: 127.0.0.1%3Bls (URL encoded ;)
+Input: 127.0.0.1$ls (bash variable)
+Result: ❌ FAILED
+
+
+## ✅ Secure Implementation
+```php
+// DVWA High Security Code
+$target = $_REQUEST['ip'];
+$octet = explode(".", $target);
+
+if((is_numeric($octet[0])) && (is_numeric($octet[1])) && 
+   (is_numeric($octet[2])) && (is_numeric($octet[3])) && 
+   (sizeof($octet) == 4)) {
+    // Valid IP format
+    $target = $octet[0].'.'.$octet[1].'.'.$octet[2].'.'.$octet[3];
+    system("ping -c 4 " . $target);
+}
+
+![Description](Command-Injection/high security 1.png)
